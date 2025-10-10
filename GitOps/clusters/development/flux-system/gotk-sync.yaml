@@ -20,7 +20,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: .GitOps/clusters/development
+  path: ./GitOps/clusters/development
   prune: true
   sourceRef:
     kind: GitRepository

@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 60s
-  path: .GitOps/apps/development/kube-prometheus-stack
+  path: ./GitOps/apps/development/kube-prometheus-stack
   prune: true
   wait: true
   sourceRef:
