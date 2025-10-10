@@ -9,4 +9,3 @@ transformers:
 patchesStrategicMerge:
   - patch-hpa.yaml
   - patch-color.yaml
-  - patch-text.yaml
