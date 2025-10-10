@@ -2,7 +2,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: traefik
+  name: hcloud-csi
 spec:
   interval: 5m0s
-  url: https://traefik.github.io/charts
+  url: https://charts.hetzner.cloud
