@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 60s
-  path: ./apps/development/hashicorp-vault
+  path: .GitOps/apps/development/hashicorp-vault
   prune: true
   wait: true
   sourceRef:
