@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - certificate-internal-ca.yaml
+  - certificate-vault-server.yaml
+  - issuer-internal-ca.yaml
+  - issuer-selfsigned.yaml
