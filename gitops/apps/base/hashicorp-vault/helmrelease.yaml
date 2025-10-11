@@ -13,3 +13,8 @@ spec:
         kind: HelmRepository
         name: hashicorp-vault
       interval: 5m
+
+  valuesFrom:
+    - kind: ConfigMap
+      name: vault-values
+      valuesKey: values.yaml

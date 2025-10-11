@@ -5,12 +5,4 @@ resources:
   - ../../base/hashicorp-vault
   - namespace.yaml
   - ingress.yaml
-
-patches:
-  - target:
-      group: helm.toolkit.fluxcd.io
-      version: v2
-      kind: HelmRelease
-      name: hashicorp-vault
-      namespace: apps
-    path: patches/patch-tls-values.yaml
+  - vault-values-configmap.yaml
