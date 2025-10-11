@@ -27,7 +27,10 @@ spec:
       name: traefik
     ports:
       web:
-        redirectTo: websecure
+        redirections:
+          entryPoint:
+            to: websecure
+            scheme: https
       websecure:
         tls:
           enabled: true
