@@ -1,9 +1,16 @@
 injector:
   enabled: false
 
+global:
+  tlsDisable: false
+
 server:
   ui: true
 
+  # roll pods automatically when spec changes
+  updateStrategyType: RollingUpdate
+
+  # mount cert-manager's TLS secret
   volumes:
     - name: userconfig-vault-server-tls
       secret:
@@ -14,8 +21,34 @@ server:
       mountPath: /vault/userconfig/vault-server-tls
       readOnly: true
 
+  # make CLI/probes trust the CA by default
   extraEnvironmentVars:
     VAULT_CACERT: /vault/userconfig/vault-server-tls/ca.crt
+
+  # override probes to ignore VAULT_CACERT (prevents TLS probe failures)
+  readinessProbe:
+    enabled: true
+    exec:
+      command:
+        - /bin/sh
+        - -ec
+        - 'env -u VAULT_CACERT vault status -tls-skip-verify'
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 2
+
+  livenessProbe:
+    enabled: true
+    exec:
+      command:
+        - /bin/sh
+        - -ec
+        - 'env -u VAULT_CACERT vault status -tls-skip-verify'
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
 
   standalone:
     enabled: true
@@ -32,6 +65,3 @@ server:
       storage "raft" {
         path = "/vault/data"
       }
-
-global:
-  tlsDisable: false
