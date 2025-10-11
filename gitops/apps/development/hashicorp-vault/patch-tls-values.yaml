@@ -1,15 +1,17 @@
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
-metadata:
-  name: hashicorp-vault
 spec:
   values:
     server:
       ui: true
+
       extraVolumes:
-        - type: secret
-          name: vault-server-tls
-          path: /vault/tls
+        - name: vault-tls
+          secret:
+            secretName: vault-server-tls
+      extraVolumeMounts:
+        - name: vault-tls
+          mountPath: /vault/tls
+          readOnly: true
+
       standalone:
         enabled: true
         config: |
