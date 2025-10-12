@@ -5,6 +5,5 @@ metadata:
   namespace: ingress-traefik
 spec:
   serverName: hashicorp-vault.apps.svc
-
   rootCAsSecrets:
     - vault-ca
