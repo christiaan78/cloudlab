@@ -4,6 +4,8 @@ metadata:
   name: vault-tls
   namespace: ingress-traefik
 spec:
+  # Use the DNS SAN that’s on Vault’s cert
   serverName: hashicorp-vault.apps.svc
-  rootCAsSecrets:
-    - vault-ca
+  # Traefik v3+: use rootCAs (not rootCAsSecrets)
+  rootCAs:
+    - secret: vault-ca
