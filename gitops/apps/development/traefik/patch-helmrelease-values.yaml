@@ -4,6 +4,9 @@ metadata:
   name: traefik
 spec:
   values:
+    providers:
+      kubernetesCRD:
+        allowCrossNamespace: true
     service:
       enabled: true
       type: ClusterIP
