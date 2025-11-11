@@ -2,17 +2,17 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: vault-server-tls
-  namespace: apps
+  namespace: platform
 spec:
   secretName: vault-server-tls
   issuerRef:
     kind: Issuer
     name: vault-internal-ca-issuer
   dnsNames:
-    - hashicorp-vault.apps.svc
-    - hashicorp-vault.apps.svc.cluster.local
-    - "*.apps.svc"
-    - "*.apps.svc.cluster.local"
+    - hashicorp-vault.platform.svc
+    - hashicorp-vault.platform.svc.cluster.local
+    - "*.platform.svc"
+    - "*.platform.svc.cluster.local"
   usages:
     - digital signature
     - key encipherment

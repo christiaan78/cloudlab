@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: vault-internal-ca-issuer
-  namespace: apps
+  namespace: platform
 spec:
   ca:
     secretName: vault-internal-ca

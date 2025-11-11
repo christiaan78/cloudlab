@@ -5,8 +5,8 @@
 We want a **secure-by-default** platform where:
 
 1. **All in-cluster traffic to Vault is HTTPS.**
-   Clients inside Kubernetes (ESO, apps, CLI, probes) connect to
-   `https://hashicorp-vault.apps.svc:8200`, and **validate** Vault’s identity.
+   Clients inside Kubernetes (ESO, platform, CLI, probes) connect to
+   `https://hashicorp-vault.platform.svc:8200`, and **validate** Vault’s identity.
 
 2. **Certificates are managed declaratively.**
    Certificates are issued automatically by **cert-manager**, not by hand, and live in Git (through CRDs, not raw key material).
@@ -25,12 +25,12 @@ This gives us encrypted, verified traffic end-to-end, reproducible with Flux, an
 * We bootstrap a **self-signed CA** just once for the cluster (`vault.internal.ca`).
 * Using that CA, cert-manager issues a **server certificate** for Vault with DNS SANs that match the service names:
 
-  * `hashicorp-vault.apps.svc`
-  * `hashicorp-vault.apps.svc.cluster.local`
+  * `hashicorp-vault.platform.svc`
+  * `hashicorp-vault.platform.svc.cluster.local`
 * cert-manager stores:
 
-  * the **CA** in a Secret (`apps/vault-internal-ca`)
-  * the **server cert** in a Secret (`apps/vault-server-tls`)
+  * the **CA** in a Secret (`platform/vault-internal-ca`)
+  * the **server cert** in a Secret (`platform/vault-server-tls`)
 
 ### 2) Vault server (Helm)
 
@@ -42,7 +42,7 @@ This gives us encrypted, verified traffic end-to-end, reproducible with Flux, an
 
 * Traefik gets a **ServersTransport** object that says:
 
-  * “When I call Vault, use SNI `hashicorp-vault.apps.svc` and trust this **CA**.”
+  * “When I call Vault, use SNI `hashicorp-vault.platform.svc` and trust this **CA**.”
 * We provide that CA to Traefik via a Secret (`ingress-traefik/vault-ca`) containing **`ca.crt`**.
   *(For the PoC we keep this Secret **static** with the CA public cert—simple and explicit.)*
 * On the **Vault Service**, we add Traefik annotations telling it to:
@@ -68,9 +68,9 @@ Result: **Browser → Traefik (edge)**, and **Traefik → Vault (HTTPS, verified
 * `gitops/infrastructure/base/tls/vault/`
 
   * `issuer-selfsigned.yaml` (bootstrap Issuer)
-  * `certificate-internal-ca.yaml` (**creates** `apps/vault-internal-ca` – the CA)
+  * `certificate-internal-ca.yaml` (**creates** `platform/vault-internal-ca` – the CA)
   * `issuer-internal-ca.yaml` (Issuer backed by that CA)
-  * `certificate-vault-server.yaml` (**creates** `apps/vault-server-tls` – Vault server cert)
+  * `certificate-vault-server.yaml` (**creates** `platform/vault-server-tls` – Vault server cert)
   * `kustomization.yaml`
 * `gitops/infrastructure/development/tls/vault/`
   Overlay `kustomization.yaml` that applies the above in dev.
@@ -79,14 +79,14 @@ Result: **Browser → Traefik (edge)**, and **Traefik → Vault (HTTPS, verified
 
 ### C) Vault (the app)
 
-* `gitops/apps/base/hashicorp-vault/`
+* `gitops/platform/base/hashicorp-vault/`
 
   * `helmrepository.yaml` (HashiCorp charts)
   * `helmrelease.yaml` (chart `vault`)
   * `kustomization.yaml`
-* `gitops/apps/development/hashicorp-vault/`
+* `gitops/platform/development/hashicorp-vault/`
 
-  * `namespace.yaml` (namespace `apps`)
+  * `namespace.yaml` (namespace `platform`)
   * `values.yaml` (**TLS mount & listener**, `VAULT_CACERT`, probe overrides, and **Service annotations for Traefik**; see below)
   * `ingress.yaml` (Traefik class & host rules only)
   * `kustomization.yaml` (includes the above and wires values into the HelmRelease)
@@ -107,18 +107,18 @@ Result: **Browser → Traefik (edge)**, and **Traefik → Vault (HTTPS, verified
 
 ### D) Traefik (the ingress controller)
 
-* `gitops/apps/base/traefik/`
+* `gitops/platform/base/traefik/`
 
   * `helmrelease-traefik.yaml`, `helmrelease-crds.yaml`, `helmrepository.yaml`, `kustomization.yaml`
-* `gitops/apps/development/traefik/`
+* `gitops/platform/development/traefik/`
 
   * `kustomization.yaml`, `namespace.yaml`
-  * `serverstransport-vault.yaml` (**ServersTransport** with `serverName: hashicorp-vault.apps.svc` and `rootCAs: - secret: vault-ca`)
+  * `serverstransport-vault.yaml` (**ServersTransport** with `serverName: hashicorp-vault.platform.svc` and `rootCAs: - secret: vault-ca`)
   * `vault-ca-secret.yaml` (**static** Secret with `ca.crt` for Traefik to trust the Vault CA)
-  * `patch-helmrelease-values.yaml` (enables `providers.kubernetesCRD.allowCrossNamespace: true` so the Service in `apps` can reference a ServersTransport in `ingress-traefik`)
+  * `patch-helmrelease-values.yaml` (enables `providers.kubernetesCRD.allowCrossNamespace: true` so the Service in `platform` can reference a ServersTransport in `ingress-traefik`)
 
 > **Why cross-namespace?**
-> Our Service (in `apps`) points to a ServersTransport located in `ingress-traefik`. The Traefik chart flag `providers.kubernetesCRD.allowCrossNamespace: true` enables that reference.
+> Our Service (in `platform`) points to a ServersTransport located in `ingress-traefik`. The Traefik chart flag `providers.kubernetesCRD.allowCrossNamespace: true` enables that reference.
 
 ### E) Cluster wiring (Flux)
 
@@ -127,12 +127,12 @@ Result: **Browser → Traefik (edge)**, and **Traefik → Vault (HTTPS, verified
   * `infrastructure-cert-manager-development.yaml`
   * `infrastructure-storage-hcloud-csi-development.yaml`
   * `infrastructure-tls-vault-development.yaml`  **→ must reconcile before Vault**
-  * `apps-hashicorp-vault-development.yaml`
-  * `apps-traefik-development.yaml`
-  * `apps-kube-prometheus-stack-development.yaml`
-  * `apps-podinfo-development.yaml`
+  * `platform-hashicorp-vault-development.yaml`
+  * `platform-traefik-development.yaml`
+  * `platform-kube-prometheus-stack-development.yaml`
+  * `platform-podinfo-development.yaml`
 
-Order is enforced with `dependsOn` (or by sequencing the infra Kustomizations before the apps).
+Order is enforced with `dependsOn` (or by sequencing the infra Kustomizations before the platform).
 
 ### F) Local demo access
 
@@ -146,7 +146,7 @@ Order is enforced with `dependsOn` (or by sequencing the infra Kustomizations be
 
 ### In-cluster clients → Vault
 
-1. Client resolves `hashicorp-vault.apps.svc` via kube-DNS.
+1. Client resolves `hashicorp-vault.platform.svc` via kube-DNS.
 2. TLS handshake to Vault pod with the **server cert** issued by our **internal CA**.
 3. Client validates cert using the **CA** (`VAULT_CACERT` path or mounted trust).
 4. Requests proceed over **HTTPS**.
@@ -154,11 +154,11 @@ Order is enforced with `dependsOn` (or by sequencing the infra Kustomizations be
 ### Browser → Traefik → Vault
 
 1. Browser hits `development.vault.internal` (port-forwarded to Traefik).
-2. Traefik routes to Service `hashicorp-vault` in `apps`.
+2. Traefik routes to Service `hashicorp-vault` in `platform`.
 3. Because the Service carries **Traefik service annotations**, Traefik:
 
    * uses **HTTPS upstream**
-   * uses the **ServersTransport** `vault-tls` (SNI `hashicorp-vault.apps.svc`, trust bundle **`vault-ca`** Secret)
+   * uses the **ServersTransport** `vault-tls` (SNI `hashicorp-vault.platform.svc`, trust bundle **`vault-ca`** Secret)
 4. Traefik **validates** Vault’s cert before proxying the request.
 
 ---
@@ -166,13 +166,13 @@ Order is enforced with `dependsOn` (or by sequencing the infra Kustomizations be
 ## Validation checklist (quick)
 
 * **Secrets exist**
-  `apps/vault-internal-ca` (CA) and `apps/vault-server-tls` (server) both present with data; Traefik’s `ingress-traefik/vault-ca` has **`ca.crt`**.
+  `platform/vault-internal-ca` (CA) and `platform/vault-server-tls` (server) both present with data; Traefik’s `ingress-traefik/vault-ca` has **`ca.crt`**.
 
 * **Vault mounted & listening with TLS**
   Pod mounts `/vault/userconfig/vault-server-tls/…` and `listener "tcp"` uses those paths with `tls_disable = 0`.
 
 * **Service annotations present**
-  `kubectl -n apps get svc hashicorp-vault -o yaml` shows:
+  `kubectl -n platform get svc hashicorp-vault -o yaml` shows:
 
   * `traefik.ingress.kubernetes.io/service.serversscheme: https`
   * `traefik.ingress.kubernetes.io/service.serverstransport: ingress-traefik-vault-tls@kubernetescrd`
@@ -180,7 +180,7 @@ Order is enforced with `dependsOn` (or by sequencing the infra Kustomizations be
 * **ServersTransport present**
   In `ingress-traefik`: `serverstransport.vault-tls` with:
 
-  * `serverName: hashicorp-vault.apps.svc`
+  * `serverName: hashicorp-vault.platform.svc`
   * `rootCAs: - secret: vault-ca`
 
 * **Traefik chart flag set**
@@ -206,13 +206,13 @@ cert-manager is the **certificate authority fabric** of the cluster:
   Those options are **service-level** for the Kubernetes Ingress provider; set them on the **Vault Service** (we do this via Vault Helm values).
 
 * **Not enabling cross-namespace CRD references in Traefik.**
-  Without `providers.kubernetesCRD.allowCrossNamespace: true`, a Service in `apps` cannot use a ServersTransport in `ingress-traefik`.
+  Without `providers.kubernetesCRD.allowCrossNamespace: true`, a Service in `platform` cannot use a ServersTransport in `ingress-traefik`.
 
 * **Traefik CA Secret missing `ca.crt`.**
   Traefik expects the key to be **`ca.crt`** (or `tls.ca`). If it’s empty/incorrect, Traefik will fall back to IP and you’ll see “x509: cannot validate certificate for 10.x.x.x because it doesn’t contain any IP SANs”.
 
 * **Vault server cert missing the right SANs.**
-  The server Certificate **must** include `hashicorp-vault.apps.svc` (and `.svc.cluster.local`). Otherwise SNI validation fails.
+  The server Certificate **must** include `hashicorp-vault.platform.svc` (and `.svc.cluster.local`). Otherwise SNI validation fails.
 
 * **Reconcile order.**
   Ensure the TLS overlay (cert-manager + CA + server Certificate) applies **before** Vault, so the Secrets exist when the StatefulSet renders.
