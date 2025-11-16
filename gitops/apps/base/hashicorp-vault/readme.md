@@ -53,6 +53,7 @@ Open: **[http://localhost:8200](http://localhost:8200)**
 
 ## 4) Initialize Vault (Shamir unseal keys)
 
+**Option A:**
 On the UI (or via CLI), click **Initialize** and choose:
 
 * **Key shares (N):** total number of unseal keys to generate
@@ -61,7 +62,15 @@ On the UI (or via CLI), click **Initialize** and choose:
 > Typical dev values: `N=5`, `T=3`.
 > In production choose values that match your operational model and key custodians.
 
+**Option B:**
+Initialize using the Vault CLI (edit the key shares and threshold to a value that works for your project):
+```
+kubectl -n platform exec -it hashicorp-vault-0 --   env VAULT_ADDR=https://hashicorp-vault.platform.svc:8200   vault operator init -key-shares=2 -key-threshold=2 -tls-skip-verify
+```
+
+
 **Important:** Save the generated **unseal keys** and the **initial root token** in a secure place (password manager / HSM-backed secret store). They are displayed **once** during init.
+
 
 ---
 

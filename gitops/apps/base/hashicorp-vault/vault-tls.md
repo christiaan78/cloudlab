@@ -11,7 +11,7 @@ We want a **secure-by-default** platform where:
 2. **Certificates are managed declaratively.**
    Certificates are issued automatically by **cert-manager**, not by hand, and live in Git (through CRDs, not raw key material).
 
-3. **Ingress is safe for demos & day-2.**
+3. **Ingress is safe.**
    Traefik reverse proxy **terminates at the edge**, but when it speaks to Vault it also uses **HTTPS upstream** and **verifies** Vault’s cert with a trusted CA—no “insecure” hops inside the cluster.
 
 This gives us encrypted, verified traffic end-to-end, reproducible with Flux, and portable across providers.
