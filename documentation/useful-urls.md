@@ -18,3 +18,4 @@
 
 # Install and config docs
 - Hetzner Cloud CSI: https://cloudfleet.ai/tutorials/cloud/use-persistent-volumes-with-cloudfleet-on-hetzner/
+- Vault Secrets Operator: https://developer.hashicorp.com/vault/docs/deploy/kubernetes/vso
