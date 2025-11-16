@@ -4,6 +4,6 @@ kind: Kustomization
 resources:
   - vault-authmount.yaml
   - vault-authconfig.yaml
-  - vault-secretsengine.yaml
+  #- vault-secretsengine.yaml
   #- policies
   #- authroles
