@@ -1,7 +1,0 @@
-apiVersion: secrets.hashicorp.com/v1alpha1
-kind: VaultAuthConfig
-metadata:
-  name: k8s-config
-spec:
-  mount: k8s
-  kubernetesHost: "https://$KUBERNETES_PORT_443_TCP_ADDR:443"

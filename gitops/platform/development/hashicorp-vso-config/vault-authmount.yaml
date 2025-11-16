@@ -1,8 +1,0 @@
-apiVersion: secrets.hashicorp.com/v1alpha1
-kind: VaultAuthMount
-metadata:
-  name: k8s
-spec:
-  type: kubernetes
-  path: k8s
-  description: "Kubernetes auth for this cluster"
