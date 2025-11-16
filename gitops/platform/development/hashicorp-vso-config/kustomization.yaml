@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   #- policies
   #- authroles
+  #- vault-connection.yaml
