@@ -3,3 +3,6 @@ kind: Kustomization
 resources:
   - helmrepository.yaml
   - helmrelease.yaml
+  - vault-authmount.yaml
+  - vault-authconfig.yaml
+  - vault-secretsengine.yaml
