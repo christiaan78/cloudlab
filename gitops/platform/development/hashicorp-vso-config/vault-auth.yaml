@@ -13,7 +13,7 @@ spec:
   # Method to use when authenticating to Vault.
   method: kubernetes
   # Mount to use when authenticating to auth method.
-  mount: kubernetes
+  mount: k8s
   # Kubernetes specific auth configuration, requires that the Method be set to kubernetes.
   kubernetes:
     # role to use when authenticating to Vault

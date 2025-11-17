@@ -1,3 +1,7 @@
+Note: This guide currently describes a manual bootstrap process for Vault. We plan to simplify and automate these steps in a later stage, so treat this as an interim workflow.
+
+Disclaimer: This README was drafted with the assistance of AI and will be reviewed and validated before use in production.
+
 # HashiCorp Vault — Setup (Development Cluster)
 
 This guide documents how Vault is installed and initialized on the development cluster using Flux + Helm. It assumes Flux is bootstrapped and the cluster is healthy.
@@ -25,8 +29,7 @@ Vault needs a **PersistentVolumeClaim** for its storage. If no default StorageCl
    ```bash
    kubectl get storageclass
    kubectl annotate storageclass hcloud-volumes storageclass.kubernetes.io/is-default-class="true" --overwrite
-    ```
-
+   ```
 3. After this, Vault’s PVC should **bind automatically** and a PV will be created dynamically.
 
 > If you prefer another provisioner (e.g., local-path) or another provider’s CSI, install that first, then return here.
@@ -38,12 +41,7 @@ Vault needs a **PersistentVolumeClaim** for its storage. If no default StorageCl
 Once the hashicorp-vault-agent-injector pod is up, the hashicorp-vault pod will not be ready until the Vault init process is finished. To init Vault, forward the UI port:
 
 ```bash
-# Replace namespace if different
 kubectl -n vault get svc
-# Example shows:
-# NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)              AGE
-# hashicorp-vault  ClusterIP   10.97.17.231   <none>        8200/TCP,8201/TCP    5m
-
 kubectl -n vault port-forward svc/hashicorp-vault 8200:8200
 ```
 
@@ -53,32 +51,30 @@ Open: **[http://localhost:8200](http://localhost:8200)**
 
 ## 4) Initialize Vault (Shamir unseal keys)
 
-**Option A:**
+**Option A:**  
 On the UI (or via CLI), click **Initialize** and choose:
 
-* **Key shares (N):** total number of unseal keys to generate
-* **Key threshold (T):** how many of those must be entered to unseal Vault
+* **Key shares (N):** total number of unseal keys to generate  
+* **Key threshold (T):** how many of those must be entered to unseal Vault  
 
 > Typical dev values: `N=5`, `T=3`.
-> In production choose values that match your operational model and key custodians.
 
-**Option B:**
-Initialize using the Vault CLI (edit the key shares and threshold to a value that works for your project):
+**Option B:**  
+Initialize using the Vault CLI:
+```bash
+kubectl -n platform exec -it hashicorp-vault-0 -- \
+  env VAULT_ADDR=https://hashicorp-vault.platform.svc:8200 \
+  vault operator init -key-shares=2 -key-threshold=2 -tls-skip-verify
 ```
-kubectl -n platform exec -it hashicorp-vault-0 --   env VAULT_ADDR=https://hashicorp-vault.platform.svc:8200   vault operator init -key-shares=2 -key-threshold=2 -tls-skip-verify
-```
 
-
-**Important:** Save the generated **unseal keys** and the **initial root token** in a secure place (password manager / HSM-backed secret store). They are displayed **once** during init.
-
+**Important:** Save the generated **unseal keys** and the **initial root token** securely. They are displayed **once** during init.
 
 ---
 
 ## 5) Unseal Vault
 
-After initialization, Vault is still **sealed**. Enter **T** of the **N** unseal keys one-by-one (UI prompts for each) until the status changes to **Unsealed**.
-
-You must repeat unseal on each Vault pod (if running HA) or when pods restart (unless using auto-unseal with a KMS, which is out of scope for this phase).
+Enter **T** of the **N** unseal keys until the status changes to **Unsealed**.  
+Repeat on each Vault pod (if HA) or after restarts (unless using auto-unseal).
 
 ---
 
@@ -86,163 +82,185 @@ You must repeat unseal on each Vault pod (if running HA) or when pods restart (u
 
 Once unsealed, log in using the **root token** shown during initialization.
 
-* In the UI: choose “Token” method and paste the root token
-* Or via CLI (if configured):
-
-  ```bash
-  export VAULT_ADDR=http://localhost:8200
-  vault login <ROOT_TOKEN>
-  ```
-
-Perfect, Christiaan — let’s extend your README with the next steps we’ve been working through. I’ll keep the style consistent with your existing documentation and add the commands and context we discussed.
+```bash
+export VAULT_ADDR=http://localhost:8200
+vault login <ROOT_TOKEN>
+```
 
 ---
 
 ## 7) Setup Vault CLI and test connection
 
-Install the Vault CLI on your workstation:  
-👉 [Download instructions](https://developer.hashicorp.com/vault/install#linux)
-
-To connect from outside the cluster, use **port‑forwarding**:
+Instead of installing Vault CLI locally, use the **vault-cli pod** stored in your repo under `/tools/manifests/vault-cli.yaml`. Apply it:
 
 ```bash
-kubectl -n platform port-forward svc/hashicorp-vault 8200:8200
+kubectl apply -f tools/manifests/vault-cli.yaml
+kubectl -n platform exec -it vault-cli -- sh
 ```
 
-Then configure your environment:
+Inside the pod:
 
 ```bash
-# Point Vault CLI to the forwarded port
-export VAULT_ADDR=https://127.0.0.1:8200
-
-# Extract the CA certificate from the vault-internal-ca secret
-kubectl -n platform get secret vault-internal-ca \
-  -o jsonpath='{.data.ca\.crt}' | base64 -d > vault-ca-chain.crt
-
-# Tell Vault CLI to trust this CA
-export VAULT_CACERT=$(pwd)/vault-ca-chain.crt
-
-# Login with your root token (from init)
+export VAULT_ADDR=https://hashicorp-vault.platform.svc:8200
+export VAULT_CACERT=/vault/ca/ca.crt
 vault login <ROOT_TOKEN>
-```
-
-Validate connectivity:
-
-```bash
 vault status
 ```
 
 ---
 
-  ## 8) Enable Kubernetes auth and create policies/roles
+## 8) Enable Kubernetes auth and create policies/roles
 
-  Use the root token only for bootstrap. Once Kubernetes auth is enabled, workloads will authenticate via service accounts.
+Use the root token only for bootstrap.
 
-  ### a) Enable Kubernetes auth
-  ```bash
-  vault auth enable kubernetes
-  ```
+### a) Enable Kubernetes auth
+```bash
+vault auth enable kubernetes
+```
 
-  ### b) Configure Kubernetes auth
-  ```bash
-  vault write auth/kubernetes/config \
-      kubernetes_host="https://$KUBERNETES_PORT_443_TCP_ADDR:443" \
-      kubernetes_ca_cert=@vault-ca-chain.crt \
-      token_reviewer_jwt=@/var/run/secrets/kubernetes.io/serviceaccount/token
-  ```
+### b) Configure Kubernetes auth
+```bash
+vault write auth/kubernetes/config \
+    kubernetes_host="https://<apiserver-host>:443" \
+    kubernetes_ca_cert=@/vault/ca/ca.crt \
+    token_reviewer_jwt=@/reviewer.jwt
+```
 
-  ### c) Create an admin policy (example)
-  Save as `admin.hcl`:
-  ```hcl
-  path "*" {
-    capabilities = ["create", "read", "update", "delete", "list", "sudo"]
-  }
-  ```
+### c) Create an admin policy
+Save as `admin.hcl`:
+```hcl
+path "*" {
+  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+```
+Load it:
+```bash
+vault policy write admin admin.hcl
+```
 
-  Load it:
-  ```bash
-  vault policy write admin admin.hcl
-  ```
+### d) Create an admin user (Userpass)
+```bash
+vault auth enable userpass
+vault write auth/userpass/users/<USERNAME> \
+    password="SuperSecret" \
+    policies=admin
+```
 
-  ### d) Create an admin user (Userpass)
-  Enable the Userpass auth method (if not already enabled):
+### e) Create the operator policy
+Save as `vso-operator.hcl`:
+```hcl
+path "secret/*" {
+  capabilities = ["read", "list"]
+}
+```
+Load it:
+```bash
+vault policy write vso-operator vso-operator.hcl
+```
 
-  ```bash
-  vault auth enable userpass
-  ```
-  Create a user bound to the admin policy:
+### f) Extract token and audience, then create operator role
+First, extract the token and decode the audience (this differs per cluster):
+```bash
+TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+PAYLOAD=$(echo "$TOKEN" | cut -d. -f2)
+echo "$PAYLOAD" | base64 -d
+```
+Note the `"aud"` value.
 
-  ```bash
-  vault write auth/userpass/users/<CHANGEUSERNAME> \
-      password="SuperSecret" \
-      policies=admin
-  ```
-  Now you can log into the Vault UI with:
-
-  Username: <USERNAME>
-
-  Password: SuperSecret
-
-  Policy: admin (full rights)
-
-  ### e) Create the operator policy (example)
-  Save as `vso-operator.hcl`:
-  
-  ```hcl
-  path "secret/*" {
-    capabilities = ["read", "list"]
-  }
-  ```
-
-  Load it:
-  ```bash
-  vault policy write vso-operator vso-operator.hcl
-  ```
-
-  ### f) Create the operator role bound to the operator’s service account
-  ```bash
-  vault write auth/kubernetes/role/vso-operator \
-      bound_service_account_names=hashicorp-vault-secrets-operator-controller-manager \
-      bound_service_account_namespaces=platform \
-      policies=vso-operator \
-      ttl=24h
-      audience="vault"
-  ```
+Then create the role:
+```bash
+vault write auth/kubernetes/role/vso-operator \
+    bound_service_account_names=hashicorp-vault-secrets-operator-controller-manager \
+    bound_service_account_namespaces=platform \
+    policies=vso-operator \
+    ttl=24h \
+    audience="<aud-from-token>"
+```
 
 ---
 
-## 9) Verify operator and workloads can authenticate
+Here’s how you can expand **Step 9** with the option to validate accounts via the Vault UI, keeping the same style as the rest of your README:
 
-Before deploying the CRDs (`VaultConnection` and `VaultAuth`):
+---
 
-- **Manual check with Vault CLI:**
+## 9) Verify operator and user accounts can authenticate
+
+- **Manual check with Vault CLI (operator role):**
   ```bash
   vault write auth/kubernetes/login \
       role=vso-operator \
       jwt=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
   ```
-  This should return a Vault token scoped to the `vso-operator` policy.
+  This should return a Vault token scoped to the `vso-operator` policy.  
+  If you see:
+  ```
+  * service account name not authorized
+  ```
+  that’s expected when testing from the vault-cli pod (which uses the `default` SA). It confirms the bootstrap works. The operator pod will succeed once Flux deploys its service account.
 
-- **Operator logs:**  
-  Once you deploy the CRDs, check the operator logs to confirm it authenticates successfully.
+- **Manual check with Vault CLI (user account):**
+  ```bash
+  vault login -method=userpass \
+      username=<USERNAME> \
+      password="SuperSecret"
+  ```
+  This should succeed and return a token bound to the `admin` policy.  
+  Confirm with:
+  ```bash
+  vault token lookup
+  ```
+  You should see `policies: ["admin"]`.
 
+- **Validation in the Vault UI:**
+  1. Open the Vault UI (port‑forward or via ingress).  
+  2. Choose **“Sign in” → “Username”** and log in with your Userpass account (`<USERNAME>` / `SuperSecret`).  
+  3. Confirm that the UI shows your token and attached policies (e.g. `admin`).  
+  4. For operator validation, check the Vault UI **Access → Auth Methods → Kubernetes** section to confirm the role exists and is bound correctly. The operator itself will authenticate automatically once Flux deploys it.
+
+**Enable KV secrets engine and create Grafana policy/role:**
+
+```bash
+vault secrets enable -path=secret kv-v2 || echo "KV already enabled"
+
+cat <<EOF | vault policy write grafana -
+path "secret/data/grafana" {
+  capabilities = ["read"]
+}
+EOF
+
+vault write auth/kubernetes/role/grafana \
+    bound_service_account_names=grafana \
+    bound_service_account_namespaces=platform \
+    policies=grafana \
+    ttl=24h \
+    audience="<aud-from-token>"
+```
 ---
+## 10) Cleanup
 
-## ✅ Summary of bootstrap additions
-- Step 7: Install Vault CLI, port‑forward, configure CA, test with `vault status`.  
-- Step 8: Use root token to enable Kubernetes auth, create admin + operator policies/roles.  
-- Step 9: Verify authentication manually before deploying CRDs.  
+Once bootstrap is complete:
 
----
+- **Disable the root token** (so it cannot be used accidentally):
+  ```bash
+  vault token revoke <ROOT_TOKEN>
+  ```
+  > Keep the unseal keys and root token securely stored, but revoke the active root token used during bootstrap.
 
-👉 Would you like me to also add a **“Best Practices” section** at the end of the README (e.g., root token usage, short‑lived bootstrap tokens, revocation after bootstrap), so your dev cluster doc already nudges toward production‑grade habits?
+- **Exit the vault-cli pod:**
+  ```bash
+  exit
+  ```
 
----
+- **Delete the vault-cli pod:**
+  ```bash
+  kubectl -n platform delete pod vault-cli
+  ```
+
+This ensures you’re no longer relying on the root token or temporary CLI pod, and only Flux‑managed resources remain active.
 
 ## Troubleshooting
+- **PVC Pending:** ensure a default StorageClass exists.  
+- **Cannot reach UI:** confirm port-forward is active.  
+- **Unseal prompts keep appearing:** all pods must be unsealed; consider HA vs standalone mode.
 
-* **PVC Pending / no PV:** check `kubectl get sc` and ensure a default StorageClass is present; install CSI first.
-* **Cannot reach UI:** confirm `port-forward` is active and service name/namespace is correct.
-* **Unseal prompts keep appearing:** all pods must be unsealed; consider HA vs standalone mode and restarts.
-
-
+---
