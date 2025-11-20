@@ -75,7 +75,7 @@ Result: **Browser → Traefik (edge)**, and **Traefik → Vault (HTTPS, verified
 * `gitops/infrastructure/development/tls/vault/`
   Overlay `kustomization.yaml` that applies the above in dev.
 
-> **Reconcile order:** the TLS overlay must run **before** Vault so the Secrets exist when Helm renders the StatefulSet. Your `clusters/development/infrastructure-tls-vault-development.yaml` handles that.
+> **Reconcile order:** the TLS overlay must run **before** Vault so the Secrets exist when Helm renders the StatefulSet. The `clusters/development/infrastructure-tls-vault-development.yaml` handles that.
 
 ### C) Vault (the app)
 
@@ -127,14 +127,14 @@ Result: **Browser → Traefik (edge)**, and **Traefik → Vault (HTTPS, verified
   * `infrastructure-cert-manager-development.yaml`
   * `infrastructure-storage-hcloud-csi-development.yaml`
   * `infrastructure-tls-vault-development.yaml`  **→ must reconcile before Vault**
-  * `platform-hashicorp-vault-development.yaml`
+  * `platform-vault-development.yaml`
   * `platform-traefik-development.yaml`
   * `platform-kube-prometheus-stack-development.yaml`
   * `platform-podinfo-development.yaml`
 
 Order is enforced with `dependsOn` (or by sequencing the infra Kustomizations before the platform).
 
-### F) Local demo access
+### F) Local access
 
 * `tools/scripts/port-forwarding/port-forward.sh`
   Port-forwards Traefik’s Service (e.g., `:18443 → :443`) and auto-kills stale forwards.
@@ -200,7 +200,7 @@ cert-manager is the **certificate authority fabric** of the cluster:
 
 ---
 
-## Common pitfalls (what to avoid)
+## Common pitfalls
 
 * **Putting Traefik’s “service.*” on the Ingress instead of the Service.**
   Those options are **service-level** for the Kubernetes Ingress provider; set them on the **Vault Service** (we do this via Vault Helm values).
