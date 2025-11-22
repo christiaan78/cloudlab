@@ -72,3 +72,10 @@ server:
       storage "raft" {
         path = "/vault/data"
       }
+
+  dataStorage:
+    enabled: true
+    size: 10Gi
+    accessMode: ReadWriteOnce
+    annotations:
+      "helm.sh/resource-policy": keep 
