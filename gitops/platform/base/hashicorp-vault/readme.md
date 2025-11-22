@@ -75,6 +75,12 @@ kubectl -n platform exec -it hashicorp-vault-0 -- \
 
 Enter **T** of the **N** unseal keys until the status changes to **Unsealed**.  
 Repeat on each Vault pod (if HA) or after restarts (unless using auto-unseal).
+```bash
+kubectl -n platform exec -it hashicorp-vault-0 -- sh
+```
+```bash
+vault unseal
+```
 
 ---
 
