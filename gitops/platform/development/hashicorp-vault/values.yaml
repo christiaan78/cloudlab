@@ -77,5 +77,6 @@ server:
     enabled: true
     size: 10Gi
     accessMode: ReadWriteOnce
+    storageClass: hcloud-volumes
     annotations:
       "helm.sh/resource-policy": keep 
