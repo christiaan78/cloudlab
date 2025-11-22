@@ -19,7 +19,7 @@ kubectl -n platform exec -it vault-cli -- sh
 5. Export your root token (provided after Vault init proces)
 
 ```bash
-export VAULT_ADDR=https://hashicorp-vault-0.hashicorp-vault-internal:8201
+export VAULT_ADDR=https://hashicorp-vault.platform.svc:8200
 export VAULT_CACERT=/vault/ca/ca.crt
 export VAULT_TOKEN=<TOKENHERE>
 ```
