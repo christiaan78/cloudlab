@@ -79,7 +79,7 @@ Repeat on each Vault pod (if HA) or after restarts (unless using auto-unseal).
 kubectl -n platform exec -it hashicorp-vault-0 -- sh
 ```
 ```bash
-vault unseal
+vault operator unseal
 ```
 
 ---
