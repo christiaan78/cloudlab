@@ -4,9 +4,8 @@ metadata:
   name: vault-connection
   namespace: platform
 spec:
-  address: https://hashicorp-vault.platform.svc:8200  
+  address: https://hashicorp-vault.platform.svc:8200
   skipTLSVerify: false
-  tls:
-    caRef:
-      name: vault-internal-ca
-      key: ca.crt
+  caCertSecretRef:
+    name: vault-internal-ca
+    key: ca.crt
