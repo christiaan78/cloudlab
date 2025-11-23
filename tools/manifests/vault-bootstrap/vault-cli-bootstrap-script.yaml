@@ -9,6 +9,10 @@ data:
     set -e
     echo "Bootstrapping Vault..."
 
+    # Set Vault environment
+    export VAULT_ADDR=https://hashicorp-vault.platform.svc:8200
+    export VAULT_CACERT=/vault/ca/ca.crt
+
     # Enable Kubernetes auth
     vault auth enable kubernetes || echo "Kubernetes auth already enabled"
 
@@ -61,7 +65,7 @@ metadata:
 spec:
   containers:
   - name: cli
-    image: hashicorp/vault:1.17.0
+    image: hashicorp/vault:1.20.4 # align with Vault version running in the cluster
     command: ["sh"]
     args: ["-c", "sleep infinity"]   # keep pod running
     stdin: true
