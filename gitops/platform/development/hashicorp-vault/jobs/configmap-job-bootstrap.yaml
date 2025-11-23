@@ -15,6 +15,8 @@ data:
 
     vault auth enable kubernetes || echo "Kubernetes auth already enabled"
 
+    vault secrets enable -path=secret kv-v2 || echo "KV engine already enabled"
+
     vault write auth/kubernetes/config \
         kubernetes_host="https://<apiserver-host>:443" \
         kubernetes_ca_cert=@/vault/ca/ca.crt \
