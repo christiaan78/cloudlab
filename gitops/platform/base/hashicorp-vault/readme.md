@@ -1,7 +1,5 @@
 Note: This guide currently describes a manual bootstrap process for Vault. We plan to simplify and automate these steps in a later stage, so treat this as an interim workflow.
 
-Disclaimer: This README was drafted with the assistance of AI and will be reviewed and validated before use in production.
-
 # HashiCorp Vault — Setup (Development Cluster)
 
 This guide documents how Vault is installed and initialized on the development cluster using Flux + Helm. It assumes Flux is bootstrapped and the cluster is healthy.
