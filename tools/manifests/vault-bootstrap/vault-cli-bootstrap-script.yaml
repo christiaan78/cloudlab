@@ -20,7 +20,7 @@ data:
     vault write auth/kubernetes/config \
         kubernetes_host="https://<apiserver-host>:443" \
         kubernetes_ca_cert=@/vault/ca/ca.crt \
-        token_reviewer_jwt=@/reviewer.jwt
+        token_reviewer_jwt=@/var/run/secrets/kubernetes.io/serviceaccount/token
 
     # Create admin policy
     cat <<EOF | vault policy write admin -
@@ -45,7 +45,7 @@ data:
     # Extract token audience and create operator role
     TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
     PAYLOAD=$(echo "$TOKEN" | cut -d. -f2)
-    AUD=$(echo "$PAYLOAD" | base64 -d | grep -o '"aud":[^"]*' | cut -d'"' -f4)
+    AUD=$(echo "$PAYLOAD" | base64 -d | jq -r .aud)
 
     vault write auth/kubernetes/role/vso-operator \
         bound_service_account_names=hashicorp-vault-secrets-operator-controller-manager \
@@ -66,8 +66,9 @@ spec:
   containers:
   - name: cli
     image: hashicorp/vault:1.20.4 # align with Vault version running in the cluster
-    command: ["sh"]
-    args: ["-c", "sleep infinity"]   # keep pod running
+    command: ["sh", "-c"]
+    args:
+      - apk add --no-cache jq && sleep infinity
     stdin: true
     tty: true
     volumeMounts:

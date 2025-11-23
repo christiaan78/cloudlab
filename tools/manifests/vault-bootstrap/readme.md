@@ -19,8 +19,6 @@ kubectl -n platform exec -it vault-cli -- sh
 5. Export your root token (provided after Vault init proces)
 
 ```bash
-export VAULT_ADDR=https://hashicorp-vault.platform.svc:8200
-export VAULT_CACERT=/vault/ca/ca.crt
 export VAULT_TOKEN=<TOKENHERE>
 ```
 
@@ -29,3 +27,23 @@ export VAULT_TOKEN=<TOKENHERE>
 ```bash
 /scripts/bootstrap.sh
 ```
+
+7. Cleanup
+
+Once bootstrap is complete:
+
+- **Disable the root token** (so it cannot be used accidentally):
+  ```bash
+  vault token revoke <ROOT_TOKEN>
+  ```
+  > Keep the unseal keys and root token securely stored, but revoke the active root token used during bootstrap.
+
+- **Exit the vault-cli pod:**
+  ```bash
+  exit
+  ```
+
+- **Delete the vault-cli pod:**
+  ```bash
+  kubectl -n platform delete pod vault-cli
+  ```
