@@ -138,7 +138,7 @@ server:
   resources:
     requests:
       memory: 500Mi
-      cpu: 1000M
+      cpu: 1000m
     limits:
       memory: 1Gi
-      cpu: 2000M
+      cpu: 2000m
