@@ -141,4 +141,4 @@ server:
       cpu: 250m
     limits:
       memory: 500Mi
-      cpu: 500mm
+      cpu: 500m
