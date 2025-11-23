@@ -3,19 +3,45 @@ injector:
   enabled: false
 
 global:
+  enabled: true
   tlsDisable: false
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 250m
+    limits:
+      memory: 256Mi
+      cpu: 250m
+
+# Vault UI
+ui:
+  enabled: true
+  serviceType: "LoadBalancer"
+  serviceNodePort: null
+  externalPort: 8200
 
 server:
-  ui: true
-
   # roll pods automatically when spec changes
   updateStrategyType: RollingUpdate
 
+  # extraVolumes is a list of extra volumes to mount. These will be exposed
+  # to Vault in the path `/vault/userconfig/<name>/`.
+  extraVolumes:
+    - type: secret
+      name: vault-server-tls
+    - type: secret
+      name: vault-internal-ca
+
+  # This configures the Vault Statefulset to create a PVC for audit logs.
+  # See https://www.vaultproject.io/docs/audit/index.html to know more
+  auditStorage:
+    enabled: true
+
   # mount cert-manager's TLS secret
-  volumes:
-    - name: userconfig-vault-server-tls
-      secret:
-        secretName: vault-server-tls
+  #volumes:
+  #  - name: userconfig-vault-server-tls
+  #    secret:
+  #      secretName: vault-server-tls
 
   volumeMounts:
     - name: userconfig-vault-server-tls
@@ -26,30 +52,15 @@ server:
   extraEnvironmentVars:
     VAULT_CACERT: /vault/userconfig/vault-server-tls/ca.crt
 
-  # override probes to ignore VAULT_CACERT (prevents TLS probe failures)
+  # For HA configuration and because we need to manually init the vault,
+  # we need to define custom readiness/liveness Probe settings
   readinessProbe:
     enabled: true
-    exec:
-      command:
-        - /bin/sh
-        - -ec
-        - 'env -u VAULT_CACERT vault status -tls-skip-verify'
-    initialDelaySeconds: 5
-    periodSeconds: 5
-    timeoutSeconds: 3
-    failureThreshold: 2
-
+    path: "/v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204"
   livenessProbe:
     enabled: true
-    exec:
-      command:
-        - /bin/sh
-        - -ec
-        - 'env -u VAULT_CACERT vault status -tls-skip-verify'
-    initialDelaySeconds: 120
-    periodSeconds: 20
-    timeoutSeconds: 5
-    failureThreshold: 10
+    path: "/v1/sys/health?standbyok=true"
+    initialDelaySeconds: 60
 
   # IMPORTANT: tell Traefik to use HTTPS upstream + your ServersTransport
   service:
@@ -57,24 +68,64 @@ server:
       traefik.ingress.kubernetes.io/service.serversscheme: https
       traefik.ingress.kubernetes.io/service.serverstransport: ingress-traefik-vault-tls@kubernetescrd
 
+  #ha:
+  #  enabled: true
+  #  replicas: 3
+  #  raft:
+  #    enabled: true
+  #    setNodeId: true
+  #    config: |-
+  #      ui = true
+  #      listener "tcp" {
+  #        address            = "0.0.0.0:8200"
+  #        cluster_address    = "0.0.0.0:8201"
+  #        tls_disable        = 0
+  #        tls_cert_file      = "/vault/userconfig/vault-server-tls/tls.crt"
+  #        tls_key_file       = "/vault/userconfig/vault-server-tls/tls.key"
+  #        tls_client_ca_file = "/vault/userconfig/vault-server-tls/ca.crt"
+  #      }
+  #      storage "raft" {
+  #        path = "/vault/data"
+  #      }
+
   ha:
     enabled: true
     replicas: 3
     raft:
       enabled: true
-      config: |-
+      setNodeId: true
+
+      config: |
         ui = true
+        cluster_name = "vault-integrated-storage"
         listener "tcp" {
-          address            = "0.0.0.0:8200"
-          cluster_address    = "0.0.0.0:8201"
-          tls_disable        = 0
-          tls_cert_file      = "/vault/userconfig/vault-server-tls/tls.crt"
-          tls_key_file       = "/vault/userconfig/vault-server-tls/tls.key"
-          tls_client_ca_file = "/vault/userconfig/vault-server-tls/ca.crt"
+          address = "[::]:8200"
+          cluster_address = "[::]:8201"
+          tls_cert_file = "/vault/userconfig/vault-server-tls/tls.crt"
+          tls_key_file = "/vault/userconfig/vault-server-tls/tls.key"
         }
+
         storage "raft" {
           path = "/vault/data"
-        }
+          retry_join {
+            leader_api_addr = "https://vault-0.vault-internal:8200"
+            leader_ca_cert_file = "/vault/userconfig/tls-ca/ca.crt"
+            leader_client_cert_file = "/vault/userconfig/vault-server-tls/tls.crt"
+            leader_client_key_file = "/vault/userconfig/vault-server-tls/tls.key"
+          }
+          retry_join {
+            leader_api_addr = "https://vault-1.vault-internal:8200"
+            leader_ca_cert_file = "/vault/userconfig/tls-ca/ca.crt"
+            leader_client_cert_file = "/vault/userconfig/vault-server-tls/tls.crt"
+            leader_client_key_file = "/vault/userconfig/vault-server-tls/tls.key"
+          }
+          retry_join {
+            leader_api_addr = "https://vault-2.vault-internal:8200"
+            leader_ca_cert_file = "/vault/userconfig/tls-ca/ca.crt"
+            leader_client_cert_file = "/vault/userconfig/vault-server-tls/tls.crt"
+            leader_client_key_file = "/vault/userconfig/vault-server-tls/tls.key"
+          }
+        } 
 
   dataStorage:
     enabled: true
@@ -86,8 +137,8 @@ server:
 
   resources:
     requests:
-      memory: 256Mi
-      cpu: 250m
+      memory: 4Gi
+      cpu: 1000Mi
     limits:
-      memory: 256Mi
-      cpu: 250m
+      memory: 8Gi
+      cpu: 2000Mi
