@@ -1,0 +1,58 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: vault-bootstrap-job-v1
+  namespace: platform
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: bootstrap
+        image: hashicorp/vault:1.20.4
+        command: ["sh", "-c"]
+        args:
+          - apk add --no-cache jq && sh /scripts/bootstrap.sh
+        env:
+        - name: VAULT_ADDR
+          value: https://hashicorp-vault.platform.svc:8200
+        - name: VAULT_CACERT
+          value: /vault/ca/ca.crt
+        - name: VAULT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: vault-bootstrap-token
+              key: token
+        - name: BOOTSTRAP_USER
+          valueFrom:
+            secretKeyRef:
+              name: vault-bootstrap-user
+              key: username
+        - name: BOOTSTRAP_PASS
+          valueFrom:
+            secretKeyRef:
+              name: vault-bootstrap-user
+              key: password
+        volumeMounts:
+        - name: vault-ca
+          mountPath: /vault/ca
+          readOnly: true
+        - name: bootstrap-scripts
+          mountPath: /scripts
+          readOnly: true
+        - name: vault-server-tls
+          mountPath: /vault/userconfig/vault-server-tls
+          readOnly: true
+      volumes:
+      - name: vault-ca
+        secret:
+          secretName: vault-internal-ca
+      - name: vault-server-tls
+        secret:
+          secretName: vault-server-tls
+      - name: bootstrap-scripts
+        configMap:
+          name: vault-bootstrap
+          defaultMode: 0755
