@@ -13,3 +13,5 @@ spec:
         kind: HelmRepository
         name: hashicorp-vault-secrets-operator
       interval: 5m
+  values:
+  installCRDs: true
