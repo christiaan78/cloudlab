@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: vault-bootstrap-job-v4
+  name: vault-bootstrap-job-v5
   namespace: platform
 spec:
   backoffLimit: 0
