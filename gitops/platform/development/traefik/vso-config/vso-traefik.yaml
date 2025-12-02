@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vso-traefik
+  namespace: ingress-traefik
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: traefik-vault-auth
+  namespace: ingress-traefik
+spec:
+  kubernetes:
+    role: vso-traefik
+    serviceAccount: vso-traefik
+  vaultAuthGlobalRef:
+    allowDefault: true
+    namespace: platform

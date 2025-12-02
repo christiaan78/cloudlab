@@ -5,3 +5,13 @@ namespace: platform
 resources:
   - ../../base/hashicorp-vault-secrets-operator
   - namespace.yaml
+  - vault-auth-global.yaml
+
+configMapGenerator:
+  - name: vso-values
+    namespace: platform
+    files:
+      - values.yaml=values.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
