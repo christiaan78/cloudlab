@@ -7,14 +7,12 @@ metadata:
 apiVersion: secrets.hashicorp.com/v1beta1
 kind: VaultAuth
 metadata:
-  name: vault-auth
+  name: observability-vault-auth
   namespace: observability
 spec:
-  vaultConnectionRef: platform/vault-connection
-  method: kubernetes
-  mount: kubernetes
   kubernetes:
     role: vso-observability
     serviceAccount: vso-observability
-    audiences:
-      - vault
+  vaultAuthGlobalRef:
+    allowDefault: true
+    namespace: platform
