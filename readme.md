@@ -7,11 +7,10 @@ This repository contains the full infrastructure, Kubernetes manifests and tooli
 
 ## Goals
 
-- Build a real-world multi-cloud platform (Hetzner, Scaleway)
+- Build a real-world multi-cloud platform (Hetzner, Scaleway and others)
 - Use GitOps (Flux) as the control plane for all Kubernetes workloads
 - Standardize infrastructure using Terraform and reusable modules (future)
 - Deploy production-style services (Vault, Traefik, Prometheus stack, etc.)
-- Practice secure secret management using SOPS and Vault
 - Host real applications, including Nextcloud and internal developer tooling
 - Showcase platform engineering capabilities in a long-term, public repository
 
@@ -33,7 +32,7 @@ High-level components:
 ## Repository Structure
 
 ```
-gitops/            # Kubernetes clusters: dev, prod, multi-cloud
+gitops/            # Kubernetes clusters: dev, prod
 infrastructure/    # Terraform modules and cloud provisioning
 cicd/              # CI/CD pipelines (GitHub Actions)
 documentation/     # Documentation, PoC notes, architecture, roadmap
@@ -105,6 +104,7 @@ The project is a continuous, long-term platform-engineering effort.
 See `documentation/roadmap.md` for the full, detailed plan.
 
 High-level next steps:
+- Finalize Hashicorp Vault Secrets Operator implementation
 - Expand Prometheus stack with alerting and dashboards
 - Setup backup and restore for Hashicorp Vault
 - Deploy Nextcloud using GitOps

@@ -18,7 +18,7 @@ Showcase a **multi-cloud, EU-centric Kubernetes platform** that is:
 
 ## PoC Scenarios
 
-### 1️⃣ Multi-provider cluster (Cloudfleet taints & tolerations)
+### 1️Multi-provider cluster (Cloudfleet taints & tolerations)
 
 Run a **single logical cluster** (development) across multiple providers using Cloudfleet’s multi-provider node pools.
 
@@ -37,7 +37,7 @@ One cluster, multiple providers, all observable via Grafana dashboards and Flux 
 
 ---
 
-### 2️⃣ Failover cluster (dual control planes)
+### 2️Failover cluster (dual control planes)
 
 Build a **second Cloudfleet cluster** (production) on a different provider to demonstrate full failover capability.
 
@@ -56,7 +56,7 @@ Automated redeployment and DNS rerouting without manual steps. Unified observabi
 
 ---
 
-### 3️⃣ Shared observability layer
+### 3️Shared observability layer
 
 Implement a **unified monitoring stack** across all clusters and providers.
 

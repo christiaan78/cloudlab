@@ -56,7 +56,7 @@ This gives us encrypted, verified traffic end-to-end, reproducible with Flux, an
   Public certificate of the internal CA that issued `tls.crt`.  
   Clients (CLI, ESO, Traefik, Vault peers) use this to verify that Vault’s certificate is trusted.
 
-👉 In short:  
+In short:  
 - `tls.crt` = Vault’s identity card.  
 - `tls.key` = Vault’s private signature pen.  
 - `ca.crt` = The trusted authority that validates the identity card.

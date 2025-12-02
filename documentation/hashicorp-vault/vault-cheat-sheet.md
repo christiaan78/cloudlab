@@ -1,10 +1,10 @@
-# 🔐 Vault Cheatsheet
+# Vault Cheatsheet
 
 A quick reference for HashiCorp Vault commands, concepts, and workflows.
 
 ---
 
-## 📦 Secret Engines
+## Secret Engines
 - **List enabled engines**
   ```bash
   vault secrets list -detailed
@@ -30,7 +30,7 @@ A quick reference for HashiCorp Vault commands, concepts, and workflows.
 
 ---
 
-## 🔑 Auth Methods
+## Auth Methods
 - **List enabled auth methods**
   ```bash
   vault auth list -detailed
@@ -68,7 +68,7 @@ Than configre the Kubernetes Auth method:
 
 ---
 
-## 📜 Policies
+## Policies
 - **Write a policy**
   ```bash
   cat <<EOF | vault policy write <name> -
@@ -91,7 +91,7 @@ Than configre the Kubernetes Auth method:
 
 ---
 
-## 🎟️ Tokens
+## Tokens
 - **Login with userpass**
   ```bash
   vault login -method=userpass username=<user> password=<pass>
@@ -111,7 +111,7 @@ Than configre the Kubernetes Auth method:
 
 ---
 
-## ⚙️ Operator Commands
+## Operator Commands
 - **Status**
   ```bash
   vault status
@@ -128,7 +128,7 @@ Than configre the Kubernetes Auth method:
 
 ---
 
-## 🧩 Useful Patterns
+## Useful Patterns
 - **Idempotent enable**
   ```bash
   vault secrets enable -path=secret kv-v2 || echo "KV already enabled"
