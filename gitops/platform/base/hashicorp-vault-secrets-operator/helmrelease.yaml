@@ -13,5 +13,7 @@ spec:
         kind: HelmRepository
         name: hashicorp-vault-secrets-operator
       interval: 5m
-  values:
-    installCRDs: true
+  valuesFrom:
+    - kind: ConfigMap
+      name: vso-values
+      valuesKey: values.yaml  
