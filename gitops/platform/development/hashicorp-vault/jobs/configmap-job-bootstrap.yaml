@@ -47,7 +47,7 @@ data:
     AUD=$(echo "$PAYLOAD" | base64 -d | jq -r .aud)
 
     vault write auth/kubernetes/role/vso-operator \
-        bound_service_account_names=hashicorp-vault-secrets-operator-controller-manager \
+        bound_service_account_names=default \
         bound_service_account_namespaces=platform \
         policies=vso-operator \
         ttl=24h \

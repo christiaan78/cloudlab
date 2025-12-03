@@ -15,5 +15,5 @@ spec:
     - vault
     mount: kubernetes
     role: vso-operator
-    serviceAccount: hashicorp-vault-secrets-operator-controller-manager
+    serviceAccount: default
     tokenExpirationSeconds: 600
