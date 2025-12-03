@@ -8,11 +8,11 @@ resources:
   #- secrets
   #- vso-config
 
-configMapGenerator:
-  - name: kube-prometheus-stack-values
-    namespace: observability
-    files:
-      - values.yaml=values.yaml
+#configMapGenerator:
+#  - name: kube-prometheus-stack-values
+#   namespace: observability
+#    files:
+#      - values.yaml=values.yaml
 
-generatorOptions:
-  disableNameSuffixHash: true
+#generatorOptions:
+#  disableNameSuffixHash: true
