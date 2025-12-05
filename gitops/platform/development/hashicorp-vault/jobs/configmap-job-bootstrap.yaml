@@ -14,7 +14,7 @@ data:
     export VAULT_CACERT=/vault/ca/ca.crt
 
     vault write auth/kubernetes/config \
-      kubernetes_host="https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}" \
+      kubernetes_host="https://kubernetes.default.svc" \
       kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
       token_reviewer_jwt=@/var/run/secrets/kubernetes.io/serviceaccount/token \
       audience=vault
