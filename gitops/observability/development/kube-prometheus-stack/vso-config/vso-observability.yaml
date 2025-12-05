@@ -12,7 +12,7 @@ metadata:
 spec:
   kubernetes:
     role: vso-observability
-    serviceAccount: vso-observability
+    serviceAccount: hashicorp-vault-secrets-operator-controller-manager
   vaultAuthGlobalRef:
     allowDefault: true
     namespace: platform
