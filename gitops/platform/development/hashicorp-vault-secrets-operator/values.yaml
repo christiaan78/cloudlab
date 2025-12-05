@@ -7,3 +7,9 @@ defaultVaultConnection:
   caCertSecret: "vault-internal-ca"
   tlsServerName: "hashicorp-vault.platform.svc.cluster.local"
   skipTLSVerify: false
+
+  auth:
+    kubernetes:
+      role: "vso-operator"
+      serviceAccount: "vault-secrets-operator-controller-manager"
+      tokenAudiences: vault

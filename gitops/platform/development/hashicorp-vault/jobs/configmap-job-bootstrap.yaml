@@ -13,13 +13,11 @@ data:
     export VAULT_ADDR=https://hashicorp-vault.platform.svc.cluster.local:8200
     export VAULT_CACERT=/vault/ca/ca.crt
 
-    AUD=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token | cut -d. -f2 | base64 -d | jq -r .aud)
     vault write auth/kubernetes/config \
-      kubernetes_host="https://<apiserver-host>:443" \
+      kubernetes_host="https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}" \
       kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
       token_reviewer_jwt=@/var/run/secrets/kubernetes.io/serviceaccount/token \
-      issuer="$AUD" \
-      audiences="$AUD"
+      audience=vault
 
 
     cat <<EOF | vault policy write admin -

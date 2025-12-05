@@ -151,11 +151,8 @@ automountServiceAccountToken: true
 
 ---
 
-# 🔍 Verification and Troubleshooting Commands
+# Verification and Troubleshooting Commands
 
-Everything below is **copy/paste tested**.
-
----
 
 ## 8. **Verify Vault Auth Method**
 
