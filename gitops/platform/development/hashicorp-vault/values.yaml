@@ -60,7 +60,7 @@ server:
   livenessProbe:
     enabled: true
     path: "/v1/sys/health?standbyok=true"
-    initialDelaySeconds: 60
+    initialDelaySeconds: 120
 
   # IMPORTANT: tell Traefik to use HTTPS upstream + your ServersTransport
   service:
