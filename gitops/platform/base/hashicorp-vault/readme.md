@@ -242,5 +242,5 @@ This ensures you’re no longer relying on the root token or temporary CLI pod, 
 - **Cannot reach UI:** confirm port-forward is active.  
 - **Unseal prompts keep appearing:** all pods must be unsealed; consider HA vs standalone mode.
 - **Raft joining fails:** If Raft join fails with x509: certificate is valid for … not …, check SANs in the mounted cert.
-
+- **Liveness probe failed:** Warning [....] Liveness probe failed: HTTP probe failed with statuscode: 503 > try increasing the InitialDelaySeconds
 ---
