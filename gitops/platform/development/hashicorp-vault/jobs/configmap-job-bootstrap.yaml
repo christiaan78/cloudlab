@@ -64,4 +64,10 @@ data:
         ttl=24h \
         audience=vault
         
+    vault write auth/kubernetes/role/vso-tailscale \
+        bound_service_account_names=tailscale \
+        bound_service_account_namespaces=tailscale \
+        policies=vso-operator \
+        ttl=24h \
+        audience=vault
     echo "Bootstrap complete."
