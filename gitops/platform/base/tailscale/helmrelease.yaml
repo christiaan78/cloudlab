@@ -13,6 +13,9 @@ spec:
         kind: HelmRepository
         name: tailscale
       interval: 5m
+  values:
+    operatorConfig:
+      logging: debug
 
   #valuesFrom:
   #  - kind: ConfigMap
