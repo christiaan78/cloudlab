@@ -17,8 +17,3 @@ grafana:
   ingress:
     enabled: true
     ingressClassName: tailscale
-    defaultBackend:
-      service:
-        name: kube-prometheus-stack-grafana
-        port:
-          number: 80
