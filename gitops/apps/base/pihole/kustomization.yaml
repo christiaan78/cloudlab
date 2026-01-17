@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: pihole
 resources:
-  - vso-pihole.yaml
+  #- vso-pihole.yaml
   - deployment.yaml
   - ingress.yaml
   - namespace.yaml
@@ -11,5 +11,5 @@ resources:
   - pvc.yaml
   - secret-webpassword.yaml
   - service.yaml
-  - serviceaccount.yaml
+  #- serviceaccount.yaml
   - vso-pihole.yaml
