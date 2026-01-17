@@ -70,4 +70,12 @@ data:
         policies=vso-operator \
         ttl=24h \
         audience=vault
+
+    vault write auth/kubernetes/role/vso-pihole \
+        bound_service_account_names=pihole \
+        bound_service_account_namespaces=pihole \
+        policies=vso-operator \
+        ttl=24h \
+        audience=vault
+
     echo "Bootstrap complete."
