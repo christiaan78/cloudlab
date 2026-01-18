@@ -41,7 +41,6 @@ data:
 
     TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
     PAYLOAD=$(echo "$TOKEN" | cut -d. -f2)
-    AUD=$(echo "$PAYLOAD" | base64 -d | jq -r .aud)
 
     vault write auth/kubernetes/role/vso-operator \
         bound_service_account_names=default \
