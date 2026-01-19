@@ -6,7 +6,6 @@ metadata:
     app: pihole
 data:
   99-custom.conf: |
-    cache-size=10000
     dnssec
     dnssec-check-unsigned
     log-queries=extra
