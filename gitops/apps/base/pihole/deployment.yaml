@@ -90,7 +90,7 @@ spec:
               name: pihole-webpassword
               key: password
         - name: FTLCONF_misc_etc_dnsmasq_d
-          value: "true"
+          value: "false"
         - name: DNS1
           value: "86.54.11.1"
         - name: DNS2
@@ -134,17 +134,11 @@ spec:
         volumeMounts:
         - name: pihole-etc
           mountPath: /etc/pihole/
-        - name: dnsmasq-etc
-          mountPath: /etc/dnsmasq.d/99-custom.conf
-          subPath: 99-custom.conf
         - name: tmp
           mountPath: /tmp
       volumes:
       - name: pihole-etc
         persistentVolumeClaim:
           claimName: pihole-pvc
-      - name: dnsmasq-etc
-        configMap:
-          name: pihole-dnsmasq-cm
       - name: tmp
         emptyDir: {}
