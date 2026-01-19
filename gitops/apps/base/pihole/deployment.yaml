@@ -91,8 +91,6 @@ spec:
               key: password
         - name: FTLCONF_dns_listeningMode
           value: "ALL"
-        - name: FTLCONF_dns_listeningMode
-          value: "all"
         - name: DNSMASQ_USER
           value: "root"
         - name: FTLCONF_dns_upstreams
