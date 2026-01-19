@@ -17,7 +17,7 @@ spec:
         env:
         - name: PIHOLE_BASE
           value: "http://pihole-service.pihole.svc.cluster.local"
-        - name: FTLCONF_webserver_api_password
+        - name: PIHOLE_PASSWORD
           valueFrom:
             secretKeyRef:
               name: pihole-webpassword
