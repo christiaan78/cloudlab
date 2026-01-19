@@ -31,59 +31,45 @@ spec:
           apk add --no-cache curl jq
 
           echo "Authenticating to Pi-hole API..."
+          PASS_JSON="$(printf '%s' "${PIHOLE_PASSWORD}" | jq -Rs .)"
           AUTH_JSON="$(curl -fsSL \
             -X POST "${PIHOLE_BASE}/api/auth" \
             -H "accept: application/json" \
             -H "content-type: application/json" \
-            --data "{\"password\":\"${PIHOLE_PASSWORD}\"}")"
+            --data "{\"password\":${PASS_JSON}}")"
 
           SID="$(echo "$AUTH_JSON" | jq -r '.session.sid // empty')"
-          CSRF="$(echo "$AUTH_JSON" | jq -r '.session.csrf // empty')"
-
           if [ -z "$SID" ]; then
             echo "ERROR: Could not obtain SID from /api/auth response:"
             echo "$AUTH_JSON"
             exit 1
           fi
 
-          auth_headers() {
-            # Some examples use 'sid', the docs describe session IDs; sending both headers is robust.
-            # CSRF is included when present.
-            echo "-H" "sid: ${SID}" "-H" "X-FTL-SID: ${SID}"
-            [ -n "$CSRF" ] && echo "-H" "X-FTL-CSRF: ${CSRF}"
-          }
+          SID_ENC="$(printf '%s' "$SID" | jq -sRr @uri)"
 
           echo "Upserting adlists..."
           while IFS= read -r url; do
+            url="$(printf '%s' "$url" | tr -d '\r')"
             [ -z "$url" ] && continue
             case "$url" in \#*) continue ;; esac
 
             enc="$(printf '%s' "$url" | jq -sRr @uri)"
-
             payload='{"comment":"managed-by-gitops","type":"block","enabled":true,"groups":[0]}'
 
             code="$(curl -sS -o /dev/null -w '%{http_code}' \
-              -X PUT "${PIHOLE_BASE}/api/lists/${enc}?type=block" \
+              -X PUT "${PIHOLE_BASE}/api/lists/${enc}?type=block&sid=${SID_ENC}" \
               -H "accept: application/json" \
               -H "content-type: application/json" \
-              $(auth_headers) \
-              --data "$payload")"
+              --data "$payload" || true)"
 
             echo "  ${url} -> HTTP ${code}"
           done < /config/adlists.txt
 
           echo "Running gravity update..."
-          # This endpoint streams CLI-like output; allow it to run a while.
+          # Note: gravity endpoint output is not necessarily JSON.
           curl -sS \
-            -X POST "${PIHOLE_BASE}/api/action/gravity" \
-            $(auth_headers) \
+            -X POST "${PIHOLE_BASE}/api/action/gravity?sid=${SID_ENC}" \
             --max-time 1800 || true
-
-          echo "Restarting DNS..."
-          curl -sS \
-            -X POST "${PIHOLE_BASE}/api/action/restartdns" \
-            $(auth_headers) \
-            -o /dev/null || true
 
           echo "Done."
       volumes:
