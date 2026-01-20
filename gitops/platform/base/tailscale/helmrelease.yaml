@@ -16,8 +16,3 @@ spec:
   values:
     operatorConfig:
       logging: debug
-
-  #valuesFrom:
-  #  - kind: ConfigMap
-  #    name: vault-values
-  #    valuesKey: values.yaml
