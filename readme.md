@@ -46,9 +46,11 @@ tools/             # Utility manifests, scripts
 
 - Prometheus Stack  
 - Traefik  
-- Hashicorp Vault (internal DNS, TLS)  
+- Hashicorp Vault (TLS enabled)  
 - Hashicorp Vault Secrets Operator
 - Podinfo (demo app)
+- Pi-Hole (used as demo app for showing multi-cloud provider setup)
+- Tailscale (to access services securely without exposing the cluster to the internet)
 - Cert manager
 - Hetzner Cloud CSI
 
@@ -106,11 +108,14 @@ See `documentation/roadmap.md` for the full, detailed plan.
 High-level next steps:
 - ~~Finalize Hashicorp Vault Secrets Operator implementation~~
 - ~~Expand Prometheus stack with alerting and dashboards~~
-- Add CI pipelines for validation and automation
-- Deploy Identity Provider (e.g. Athentik) and front all apps running in the cluster with a SSO option
+- Deploy Pi-Hole for DNS filtering and testing multi-cloud setup
+- Add CI pipeline for managing the Tailscale ACLs
+- Expand platform with Terraform modules and Ansible playbook to add K8s worker nodes to the cluster
+- Deploy 2nd replica of Pi-Hole on Scaleway node. 
 - Setup backup and restore for Hashicorp Vault
 - Deploy Nextcloud using GitOps
-- Expand platform with Terraform modules and Ansible playbook (DNS, firewall, cloud infra)
+- Deploy Identity Provider (e.g. Athentik) and front all apps running in the cluster with a SSO option
+- Add CI pipelines for validation and automation
 - Deploy Plane or OpenProject for project planning
 - Add AI workloads (on separate cloud provider)
 - Integrate cost monitoring
