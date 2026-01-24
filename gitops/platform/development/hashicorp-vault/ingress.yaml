@@ -5,8 +5,11 @@ metadata:
   namespace: platform
 spec:
   ingressClassName: tailscale
+  tls:
+    - hosts:
+        - vault
   defaultBackend:
     service:
-      name: hashicorp-vault-ui
+      name: hashicorp-vault-ui-ts
       port:
-        number: 8200
+        name: https
