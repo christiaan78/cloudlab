@@ -8,6 +8,7 @@ resources:
   #- namespace.yaml
   - ingress.yaml
   - jobs
+  - service-tailscale.yaml
 
 configMapGenerator:
   - name: vault-values
