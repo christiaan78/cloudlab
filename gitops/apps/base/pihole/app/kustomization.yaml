@@ -9,7 +9,6 @@ resources:
   - np-allow-tailscale-to-pihole.yaml
   - configmap.yaml
   - pvc.yaml
-  - secret-webpassword.yaml
   - service.yaml
   - serviceaccount.yaml
   - bootstrap-job.yaml
