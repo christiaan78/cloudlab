@@ -33,3 +33,8 @@ patches:
       kind: Ingress
       name: pihole-ui
     path: patch-ingress-host.yaml
+
+  - target:
+      kind: Job
+      name: pihole-bootstrap-adlists
+    path: patch-bootstrap-job.yaml

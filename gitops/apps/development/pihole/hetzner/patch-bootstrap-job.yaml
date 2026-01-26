@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pihole-bootstrap-adlists
+spec:
+  template:
+    spec:
+      containers:
+        - name: bootstrap
+          env:
+            - name: PIHOLE_BASE
+              value: "http://htz-pihole-service"
+            - name: PIHOLE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: htz-pihole-webpassword
+                  key: password

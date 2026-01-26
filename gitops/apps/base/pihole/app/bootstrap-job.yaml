@@ -16,7 +16,7 @@ spec:
         image: alpine:3.20
         env:
         - name: PIHOLE_BASE
-          value: "http://pihole-service.pihole.svc.cluster.local"
+          value: "http://pihole-service"
         - name: PIHOLE_PASSWORD
           valueFrom:
             secretKeyRef:
