@@ -8,7 +8,7 @@ spec:
     spec:
       nodeSelector:
         cfke.io/provider: scaleway
-        cfke.io/zone: nl-ams-1
+        topology.kubernetes.io/zone: nl-ams-1
       containers:
         - name: pihole
           env:
