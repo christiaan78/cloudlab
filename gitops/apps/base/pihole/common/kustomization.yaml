@@ -4,3 +4,4 @@ namespace: pihole
 
 resources:
   - vso-pihole.yaml
+  - namespace.yaml

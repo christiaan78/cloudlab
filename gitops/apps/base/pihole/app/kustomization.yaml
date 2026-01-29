@@ -4,7 +4,6 @@ namespace: pihole
 resources:
   - deployment.yaml
   - ingress.yaml
-  - namespace.yaml
   - np-allow-bootstrap-to-pihole-http.yaml
   - np-allow-tailscale-to-pihole.yaml
   - configmap.yaml
