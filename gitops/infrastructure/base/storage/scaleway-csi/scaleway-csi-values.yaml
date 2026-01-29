@@ -1,36 +1,29 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: scaleway-csi-values
-  namespace: platform
-data:
-  scaleway-csi-values.yaml: |
-    controller:
-      replicaCount: 2
-      priorityClassName: "system-node-critical"
-      nodeSelector:
-        cfke.io/provider: scaleway
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: app.kubernetes.io/component
-                      operator: In
-                      values:
-                        - controller
-                    - key: app.kubernetes.io/name
-                      operator: In
-                      values:
-                        - scaleway-csi
-                topologyKey: "kubernetes.io/hostname"
-      scaleway:
-        existingSecretName: "scaleway-csi-secrets"
+controller:
+  replicaCount: 2
+  priorityClassName: "system-node-critical"
+  nodeSelector:
+    cfke.io/provider: scaleway
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 1
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/component
+                  operator: In
+                  values:
+                    - controller
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - scaleway-csi
+            topologyKey: "kubernetes.io/hostname"
+  scaleway:
+    existingSecretName: "scaleway-csi-secrets"
 
-    node:
-      priorityClassName: "system-node-critical"
-      hostNetwork: true
-      nodeSelector:
-        cfke.io/provider: scaleway
+node:
+  priorityClassName: "system-node-critical"
+  hostNetwork: true
+  nodeSelector:
+    cfke.io/provider: scaleway
