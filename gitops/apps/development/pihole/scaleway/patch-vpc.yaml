@@ -3,4 +3,4 @@ kind: PersistentVolumeClaim
 metadata:
   name: pihole-pvc
 spec:
-  storageClassName: sbs-default
+  storageClassName: scw-bssd

@@ -4,4 +4,4 @@ namespace: pihole
 resources:
   - ../../base/pihole/common
   - hetzner
-  # - scaleway
+  - scaleway
