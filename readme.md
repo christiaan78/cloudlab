@@ -16,6 +16,10 @@ This repository contains the full infrastructure, Kubernetes manifests and tooli
 
 ---
 
+## Multi-Provider Platform
+
+This repository also validates multi-provider platform patterns on European cloud providers (currently Hetzner and Scaleway). Multi-provider scheduling, provider-specific storage, and duplicated critical workloads are implemented as practical platform capabilities. See the documentation section for details.
+
 ## Architecture Overview
 
 High-level components:  
