@@ -1,9 +1,7 @@
 # CloudLab Platform
 
-A personal, evolving platform-engineering project focused on building an automated, secure, and provider-agnostic application platform using GitOps.  
-This repository contains the full infrastructure, Kubernetes manifests and tooling that power the platform.
+A personal, evolving platform-engineering project focused on building an automated, secure, and provider-agnostic application platform using GitOps. This repository contains the full infrastructure, Kubernetes manifests and tooling that power the platform.
 
----
 
 ## Goals
 
@@ -14,7 +12,6 @@ This repository contains the full infrastructure, Kubernetes manifests and tooli
 - Host real applications, including Nextcloud and internal developer tooling
 - Showcase platform engineering capabilities in a long-term, public repository
 
----
 
 ## Multi-Provider Platform
 
@@ -31,7 +28,6 @@ High-level components:
 - **Applications:** Podinfo, Nextcloud (planned), internal developer tools (planned), AI workloads (planned)
 - **Infrastructure:** Terraform modules for cloud providers and networking, Ansible for VM provisioning and configuration management (planned)
 
----
 
 ## Repository Structure
 
@@ -39,9 +35,8 @@ High-level components:
 gitops/            # Kubernetes clusters: dev, prod
 infrastructure/    # Terraform modules and cloud provisioning
 cicd/              # CI/CD pipelines (GitHub Actions)
-documentation/     # Documentation, PoC notes, architecture, roadmap
+documentation/     # Documentation
 tools/             # Utility manifests, scripts
-
 ```
 
 ---
@@ -53,10 +48,11 @@ tools/             # Utility manifests, scripts
 - Hashicorp Vault (TLS enabled)  
 - Hashicorp Vault Secrets Operator
 - Podinfo (demo app)
-- Pi-Hole (used as demo app for showing multi-cloud provider setup)
+- Pi-Hole
 - Tailscale (to access services securely without exposing the cluster to the internet)
 - Cert manager
 - Hetzner Cloud CSI
+- Scaleway CSI
 
 Upcoming deployments are tracked on the project [backlog](https://github.com/users/christiaan78/projects/2).
 
@@ -70,7 +66,6 @@ This repository uses:
 
 More info: `/documentation/secrets.md`
 
----
 
 ## GitOps Workflow
 
@@ -101,7 +96,6 @@ Each environment has its own:
 - Secrets
 - Policies
 
----
 
 ## Technologies Used
 
@@ -115,10 +109,8 @@ Each environment has its own:
 - Cloudfleet  
 - GitHub Actions  
 
----
 
 ## Contributions
 
 This is a personal platform engineering project, but feedback, ideas, and suggestions are always welcome.
 
-```
