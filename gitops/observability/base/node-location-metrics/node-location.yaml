@@ -1,13 +1,8 @@
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: node-location
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: node-location-metrics
-  namespace: node-location
+  namespace: observability
 data:
   metrics.prom: |
     # HELP k8s_region_lat Latitude for a cloud region (city centroid)
@@ -37,7 +32,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: node-location-metrics
-  namespace: node-location
+  namespace: observability
 spec:
   replicas: 1
   selector:
@@ -69,7 +64,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: node-location-metrics
-  namespace: node-location
+  namespace: observability
   labels:
     app: node-location-metrics
 spec:

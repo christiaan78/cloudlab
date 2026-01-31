@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: node-location-metrics
-  namespace: node-location
+  namespace: observability
   labels:
     release: kube-prometheus-stack
 spec:
@@ -11,7 +11,7 @@ spec:
       app: node-location-metrics
   namespaceSelector:
     matchNames:
-      - node-location
+      - observability
   endpoints:
     - port: http
       path: /metrics

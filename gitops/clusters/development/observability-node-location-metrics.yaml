@@ -1,0 +1,13 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: observability-node-location-metrics-development
+  namespace: flux-system
+spec:
+  interval: 60s
+  path: ./gitops/observability/development/node-location-metrics
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
