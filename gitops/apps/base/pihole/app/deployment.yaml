@@ -22,7 +22,7 @@ spec:
         fsGroup: 1000
       initContainers:
       - name: init-gravity
-        image: pihole/pihole:2025.11.1
+        image: pihole/pihole:2026.02.0
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "-lc"]
         args:
@@ -58,7 +58,7 @@ spec:
           mountPath: /tmp
       containers:
       - name: pihole
-        image: pihole/pihole:2025.11.1
+        image: pihole/pihole:2026.02.0
         securityContext:
           runAsUser: 0
           runAsNonRoot: false
