@@ -4,8 +4,8 @@ namespace: apps
 resources:
   #- ../../base/podinfo
   - namespace.yaml
-transformers:
-  - labels.yaml
-patchesStrategicMerge:
-  - patch-hpa.yaml
-  - patch-color.yaml
+#transformers:
+#  - labels.yaml
+#patchesStrategicMerge:
+#  - patch-hpa.yaml
+#  - patch-color.yaml
