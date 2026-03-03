@@ -5,4 +5,10 @@ resource "scaleway_instance_security_group" "cfke_worker" {
   inbound_default_policy  = "drop"
   outbound_default_policy = "accept"
 
+  inbound_rule {
+    action   = "accept"
+    ip_range = var.workstation_ip
+    protocol = "TCP"
+    port     = "22"
+  }
 }

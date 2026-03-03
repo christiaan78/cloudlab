@@ -24,3 +24,7 @@ variable "worker_count" {
   type    = number
   default = 1
 }
+
+variable "workstation_ip" {
+  type    = string
+}
