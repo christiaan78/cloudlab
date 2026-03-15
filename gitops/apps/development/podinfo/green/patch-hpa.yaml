@@ -2,12 +2,12 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: frontend
+  name: frontend-green
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: frontend
+    name: frontend-green
   minReplicas: 1
   maxReplicas: 1
 ---
