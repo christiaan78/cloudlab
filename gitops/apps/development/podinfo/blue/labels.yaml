@@ -6,7 +6,6 @@ metadata:
 labels:
   env: development
   instance: podinfo
-  version: blue
 fieldSpecs:
   - path: metadata/labels
     create: true
