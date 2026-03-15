@@ -7,6 +7,7 @@ resources:
   - secrets
   - vso-config
   - network-policies
+  - servicemonitors
 
 configMapGenerator:
   - name: kube-prometheus-stack-values
