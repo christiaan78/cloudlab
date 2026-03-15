@@ -10,10 +10,14 @@ spec:
   hostnames:
     - "podinfo.lab.christiaan.cloud"
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: frontend
-          port: 80
+  - matches:
+      - path:
+          type: PathPrefix
+          value: /
+    backendRefs:
+      - name: podinfo-blue
+        port: 80
+        weight: 100
+      - name: podinfo-green
+        port: 80
+        weight: 0

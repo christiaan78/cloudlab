@@ -9,4 +9,4 @@ spec:
       - name: frontend
         env:
         - name: PODINFO_UI_COLOR
-          value: "#7c3457"
+          value: "#057a55"

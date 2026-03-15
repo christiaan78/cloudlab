@@ -1,0 +1,16 @@
+# overlays/blue/labels.yaml
+apiVersion: builtin
+kind: LabelTransformer
+metadata:
+  name: labels
+labels:
+  env: development
+  instance: podinfo
+  version: green
+fieldSpecs:
+  - path: metadata/labels
+    create: true
+  - path: spec/selector/matchLabels
+    create: true
+  - path: spec/template/metadata/labels
+    create: true
