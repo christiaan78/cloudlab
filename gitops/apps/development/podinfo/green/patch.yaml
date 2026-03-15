@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podinfo-blue
+spec:
+  template:
+    spec:
+      containers:
+        - name: podinfo
+          image: ghcr.io/stefanprodan/podinfo:6.9.2
+          env:
+            - name: PODINFO_UI_COLOR
+              value: "#057a55"
+            - name: PODINFO_UI_MESSAGE
+              value: "green"
