@@ -1,20 +1,19 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: envoy-gateway-system
+  name: envoy-gateway
+  namespace: envoy-gateway-system
 spec:
-  interval: 10m
-  timeout: 15m
+  interval: 5m0s
   chart:
     spec:
       chart: gateway-helm
-      version: "1.7.1"
+      version: "v1.7.x"
       sourceRef:
         kind: HelmRepository
-        name: envoy-gateway-helm
-      interval: 5m
-
-  # valuesFrom:
-  #   - kind: ConfigMap
-  #     name: kube-prometheus-stack-values
-  #     valuesKey: values.yaml
+        name: envoy-gateway
+        namespace: envoy-gateway-system
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace
