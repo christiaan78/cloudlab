@@ -4,6 +4,7 @@ namespace: apps
 resources:
   - ../../base/podinfo
   - namespace.yaml
+  - httproute.yaml
 transformers:
  - labels.yaml
 patchesStrategicMerge:
