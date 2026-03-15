@@ -6,5 +6,4 @@ resources:
 transformers:
  - labels.yaml
 patchesStrategicMerge:
- - patch-hpa.yaml
  - patch.yaml

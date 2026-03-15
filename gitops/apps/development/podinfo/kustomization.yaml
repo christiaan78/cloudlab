@@ -6,3 +6,5 @@ resources:
   - green
   - namespace.yaml
   - httproute.yaml
+patchesStrategicMerge:
+ - patch-hpa.yaml
