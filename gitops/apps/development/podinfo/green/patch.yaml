@@ -10,6 +10,13 @@ spec:
           image: ghcr.io/stefanprodan/podinfo:6.9.2
           env:
             - name: PODINFO_UI_COLOR
-              value: "#057a55"
+              value: "#1a56db"
             - name: PODINFO_UI_MESSAGE
               value: "green"
+          command:
+            - ./podinfo
+            - --port=9898
+            - --port-metrics=9797
+            - --level=info
+            - --backend-url=http://green-backend:9898/echo
+            - --cache-server=tcp://green-cache:6379

@@ -13,3 +13,10 @@ spec:
               value: "#1a56db"
             - name: PODINFO_UI_MESSAGE
               value: "blue"
+          command:
+            - ./podinfo
+            - --port=9898
+            - --port-metrics=9797
+            - --level=info
+            - --backend-url=http://blue-backend:9898/echo
+            - --cache-server=tcp://blue-cache:6379
