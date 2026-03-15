@@ -17,7 +17,7 @@ spec:
     backendRefs:
       - name: blue-frontend
         port: 80
-        weight: 0
+        weight: 50
       - name: green-frontend
         port: 80
-        weight: 100
+        weight: 50
