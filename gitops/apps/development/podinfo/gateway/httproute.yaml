@@ -15,9 +15,9 @@ spec:
           type: PathPrefix
           value: /
     backendRefs:
-      - name: frontend-blue
+      - name: blue-frontend
         port: 80
         weight: 100
-      - name: frontend-green
+      - name: green-frontend
         port: 80
         weight: 0
