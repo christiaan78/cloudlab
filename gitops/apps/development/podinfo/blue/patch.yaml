@@ -6,7 +6,7 @@ spec:
   template:
     spec:
       containers:
-        - name: podinfo
+        - name: frontend
           image: ghcr.io/stefanprodan/podinfo:6.9.2
           env:
             - name: PODINFO_UI_COLOR

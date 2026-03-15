@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 60s
-  path: ./gitops/apps/development/podinfo
+  path: ./gitops/apps/development/podinfo/gateway
   prune: true
   wait: true
   sourceRef:
