@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: apps
 resources:
   - ../../../base/podinfo
-  - httproute.yaml
 transformers:
  - labels.yaml
 patchesStrategicMerge:
