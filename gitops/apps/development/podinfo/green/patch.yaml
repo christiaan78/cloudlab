@@ -7,7 +7,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/stefanprodan/podinfo:6.9.2
           env:
             - name: PODINFO_UI_COLOR
               value: "#1a56db"
@@ -19,4 +18,20 @@ spec:
             - --port-metrics=9797
             - --level=info
             - --backend-url=http://green-backend:9898/echo
+            - --cache-server=tcp://green-cache:6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  template:
+    spec:
+      containers:
+        - name: backend
+          command:
+            - ./podinfo
+            - --port=9898
+            - --port-metrics=9797
+            - --level=info
             - --cache-server=tcp://green-cache:6379
