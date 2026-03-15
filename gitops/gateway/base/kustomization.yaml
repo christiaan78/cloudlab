@@ -5,3 +5,4 @@ resources:
   - helmrelease.yaml
   - gatewayclass.yaml
   - gateway.yaml
+  - envoyproxy-config.yaml

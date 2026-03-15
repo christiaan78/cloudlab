@@ -1,0 +1,14 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: cloudlab-proxy-config
+  namespace: envoy-gateway-system
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        annotations:
+          tailscale.com/hostname: "cloudlab-gateway"
+        loadBalancerClass: tailscale
+        allocateLoadBalancerNodePorts: false
