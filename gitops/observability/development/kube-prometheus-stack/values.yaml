@@ -28,7 +28,7 @@ grafana:
       - kubernetes.io/pvc-protection
 
   ingress:
-    enabled: true
+    enabled: false
     ingressClassName: tailscale
     hosts:
       - grafana
@@ -45,7 +45,7 @@ alertmanager:
     targetPort: 9093
 
   ingress:
-    enabled: true
+    enabled: false
     ingressClassName: tailscale
     hosts:
       - alertmanager
