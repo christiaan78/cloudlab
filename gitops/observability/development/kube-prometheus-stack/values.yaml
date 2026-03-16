@@ -5,6 +5,12 @@ kube-state-metrics:
 grafana:
   enabled: true
 
+  grafana.ini:
+    server:
+      domain: grafana.lab.christiaan.cloud
+      root_url: "%(protocol)s://%(domain)s/"
+      serve_from_sub_path: false
+
   defaultDashboardsTimezone: cet
 
   admin:
