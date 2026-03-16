@@ -3,4 +3,4 @@ kind: Kustomization
 namespace: observability
 resources:
   - node-locations.yaml
-  - envoy-overview.yaml
+  # - envoy-overview.yaml
