@@ -15,4 +15,4 @@ spec:
   podMetricsEndpoints:
     - port: metrics
       interval: 30s
-      path: /metrics
+      path: /stats/prometheus
