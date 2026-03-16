@@ -8,6 +8,7 @@ resources:
   - vso-config
   - network-policies
   - servicemonitors
+  - httproute.yaml
 
 configMapGenerator:
   - name: kube-prometheus-stack-values
