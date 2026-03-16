@@ -2,6 +2,11 @@ kube-state-metrics:
   metricLabelsAllowlist:
     - nodes=[topology.kubernetes.io/region,topology.kubernetes.io/zone]
 
+prometheus:
+  prometheusSpec:
+    externalUrl: "http://prometheus.lab.christiaan.cloud"
+    routePrefix: /
+    
 grafana:
   enabled: true
 
