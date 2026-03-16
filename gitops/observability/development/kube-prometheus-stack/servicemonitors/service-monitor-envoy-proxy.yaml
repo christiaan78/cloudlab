@@ -1,15 +1,18 @@
 apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
+kind: PodMonitor
 metadata:
   name: envoy-proxy
-  namespace: envoy-gateway-system
+  namespace: observability
   labels:
     release: kube-prometheus-stack
 spec:
+  namespaceSelector:
+    matchNames:
+      - envoy-gateway-system
   selector:
     matchLabels:
       gateway.envoyproxy.io/owning-gateway-name: cloudlab
-  endpoints:
+  podMetricsEndpoints:
     - port: metrics
       interval: 30s
       path: /metrics

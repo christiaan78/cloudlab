@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: gateway-helm
-      app.kubernetes.io/component: envoy-gateway
+      control-plane: envoy-gateway
   endpoints:
     - port: metrics
       interval: 30s
