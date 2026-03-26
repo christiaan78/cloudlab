@@ -1,3 +1,4 @@
+# hashicorp-vault-ui-ts service
 apiVersion: v1
 kind: Service
 metadata:
@@ -8,6 +9,6 @@ spec:
     app.kubernetes.io/name: vault
   ports:
     - name: https
-      port: 443
+      port: 8200
       targetPort: 8200
   type: ClusterIP

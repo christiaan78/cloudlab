@@ -15,16 +15,12 @@ global:
 # Vault UI
 ui:
   enabled: true
-  serviceType: "LoadBalancer"
-  serviceNodePort: null
+  serviceType: ClusterIP   # exposure handled by hashicorp-vault-ui-ts + Tailscale Ingress
   externalPort: 8200
 
 server:
-  # roll pods automatically when spec changes
   updateStrategyType: RollingUpdate
 
-  # extraVolumes is a list of extra volumes to mount. These will be exposed
-  # to Vault in the path `/vault/userconfig/<name>/`.
   extraVolumes:
     - type: secret
       name: vault-server-tls
@@ -61,13 +57,9 @@ server:
     path: "/v1/sys/health?standbyok=true"
     initialDelaySeconds: 120
 
-  # IMPORTANT: tell Traefik to use HTTPS upstream + your ServersTransport
   service:
-    annotations:
-      traefik.ingress.kubernetes.io/service.serversscheme: https
-      traefik.ingress.kubernetes.io/service.serverstransport: ingress-traefik-vault-tls@kubernetescrd
+    annotations: {}   # Traefik annotations removed
 
-  # Single node standalone mode
   standalone:
     enabled: true
     config: |
